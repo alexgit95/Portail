@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <title>Positions</title>
+  </head>
+  <body>
+    <h1>Mes Positions</h1>
+	
+	<p>Click the button to get your coordinates.</p>
+
+<button onclick="getLocation()">Recuperer infos</button>
+
+<p id="demo"></p>
+<div id="llastPos">Dernieres Positions enregistr&eacute;s</div>
+<div id="lastPos"></div>
+
+<script>
+
+
+
+
+
+var x = document.getElementById("demo");
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else { 
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+function showPosition(position) {
+  x.innerHTML = "Latitude: " + position.coords.latitude + 
+  "<br>Longitude: " + position.coords.longitude;
+
+$.ajax({
+			url : "/api/v1/positions/addnow/"+position.coords.latitude+"/"+position.coords.longitude,
+			type : 'POST',
+			dataType : 'json', 
+			success : function(data,textStatus ){ 
+			
+			},
+			fail: function(xhr, textStatus, errorThrown){
+				alert('request failed');
+			}
+	});
+}
+
+
+function showExistingPosition(){
+	$.ajax({
+			url : "/api/v1/positions/",
+			type : 'GET',
+			dataType : 'json', 
+			success : function(data,textStatus ){ 
+				document.getElementById("lastPos").innerHTML="Traitement en cours....";
+				var tab=data.result.sort(function(a, b){return new Date(b.date)-new Date(a.date)});
+				var chaine='<table class="table table-dark"><thead><tr><th scope="col">#</th><th scope="col">Date</th><th scope="col">Lattitude</th><th scope="col">Longitude</th></tr></thead><tbody>';
+				for(var i=0;i<data.result.length&&i<5;i++){
+				
+					chaine+='<tr><th scope="row">'+(i+1)+'</th><td>'+affichageDate(data.result[i].date)+'</td><td>'+data.result[i].lattitude+'</td><td>'+data.result[i].longitude+'</td></tr>';
+					//console.log(tab[i].date);
+				
+				}
+				chaine+="</tbody></table>";
+				document.getElementById("lastPos").innerHTML=chaine;
+			},
+			fail: function(xhr, textStatus, errorThrown){
+				alert('request failed');
+			}
+	});
+	
+
+}
+
+function affichageDate(ldate){
+
+var ddate=new Date(ldate);
+return ("0" + ddate.getDate()).slice(-2) + "/" + ("0"+(ddate.getMonth()+1)).slice(-2) + "/" +
+    ddate.getFullYear() + " " + ("0" + ddate.getHours()).slice(-2) + ":" + ("0" + ddate.getMinutes()).slice(-2)+":"+("0" + ddate.getSeconds()).slice(-2);
+}
+
+showExistingPosition();
+</script>
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  
+ 
+  </body>
+</html>
