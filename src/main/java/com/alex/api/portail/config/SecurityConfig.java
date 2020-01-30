@@ -1,9 +1,5 @@
 package com.alex.api.portail.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,43 +16,21 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private int nbJourRememberMe;
 
+	@Value("${secure.admin.login}")
 	private String adminLogin;
-
+	@Value("${secure.admin.password}")
 	private String adminPassword;
-
+	@Value("${secure.secret.rememberme}")
 	private String secretRememberMe;
-
+	@Value("${secure.guest.login}")
 	private String guestLogin;
-
+	@Value("${secure.guest.password}")
 	private String guestPassword;
 
-	@Value("${config.emplacement.fichiers}")
-	private String cheminProperties;
+	
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		System.out.println("init security tokens");
-		String cheminConfigPositions = cheminProperties + "configuration-portail-secrets.properties";
-		File configFile = new File(cheminConfigPositions);
-		if (configFile.exists()) {
-			Properties props = new Properties();
-
-			props.load(new FileInputStream(configFile));
-
-			adminLogin = props.getProperty("secure.admin.login");
-			adminPassword = props.getProperty("secure.admin.password");
-			secretRememberMe = props.getProperty("secure.secret.rememberme");
-			guestLogin = props.getProperty("secure.guest.login");
-			guestPassword = props.getProperty("secure.guest.password");
-			nbJourRememberMe = Integer.parseInt(props.getProperty("secure.nbjour.rememberme"));
-
-			System.out.println("Chargement des tokens d'authent depuis " + cheminConfigPositions);
-
-		} else {
-			System.out.println("Le fichier de configuration " + configFile + " n'existe pas");
-			System.exit(-1);
-		}
-
 		auth.inMemoryAuthentication().withUser(adminLogin).password(passwordEncoder().encode(adminPassword))
 				.roles("USER", "ADMIN").and().withUser(guestLogin).password(passwordEncoder().encode(guestPassword))
 				.roles("USER");
