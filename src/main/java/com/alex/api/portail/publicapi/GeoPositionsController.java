@@ -35,6 +35,15 @@ public class GeoPositionsController {
 		headers.setContentType(response.getHeaders().getContentType());
 		return new ResponseEntity<>(response.getBody(), headers, HttpStatus.OK);
 	}
+	@RequestMapping(value = "/ip", method = RequestMethod.GET)
+	public ResponseEntity<String> getIP() {
+		System.out.println("GetIP");
+		
+		HttpHeaders headers = new HttpHeaders();
+		ResponseEntity<String> response = restTemplate.getForEntity(generateUrl()+"/positions/ip", String.class);
+		headers.setContentType(response.getHeaders().getContentType());
+		return new ResponseEntity<>(response.getBody(), headers, HttpStatus.OK);
+	}
 	
 	@RequestMapping(value = "/addnow/{lattitude}/{longitude}", method = RequestMethod.POST)
 	public ResponseEntity<String> addPosition(@PathVariable String lattitude, @PathVariable String longitude) {
