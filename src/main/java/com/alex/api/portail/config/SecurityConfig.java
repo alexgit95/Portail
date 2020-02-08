@@ -38,9 +38,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers("/positions/**").hasRole("USER").antMatchers("/*")
-				.permitAll().antMatchers("/css/*").permitAll().antMatchers("/js/*").permitAll().antMatchers("/img/*")
-				.permitAll().anyRequest().authenticated().and().formLogin().loginProcessingUrl("/perform_login")
+		http.csrf().disable().authorizeRequests()
+		.antMatchers("/positions/**").hasRole("USER")
+		.antMatchers("/myphotos/**").hasRole("USER")
+		.antMatchers("/api/v1/positions/**").hasRole("USER")
+		.antMatchers("/api/v1/photos/**").hasRole("USER")
+		.antMatchers("/actuator/**").hasRole("ADMIN")
+		.antMatchers("/compta/**").permitAll()
+		.antMatchers("/api/v1/compte/**").permitAll()
+		.antMatchers("/*").permitAll()
+		.antMatchers("/vendor/**").permitAll()
+		.antMatchers("/css/*").permitAll()
+		.antMatchers("/js/*").permitAll()
+		.antMatchers("/img/*").permitAll()
+		.anyRequest().authenticated().and().formLogin().loginProcessingUrl("/perform_login")
 				.failureHandler(customAuthenticationFailureHandler()).and().logout().deleteCookies("JSESSIONID").and()
 				.rememberMe().key(secretRememberMe).tokenValiditySeconds(60 * 60 * 24 * nbJourRememberMe);
 		;

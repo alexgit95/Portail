@@ -1,0 +1,123 @@
+ <!DOCTYPE html>
+<html lang="fr">
+	<head>
+	  <title>Ma Compta</title>
+	  <meta charset="utf-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
+	  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	</head>
+<body>
+
+<div class="container-fluid">
+	<div class="row">
+		<form>
+			<div class="form-group">
+				<label for="newmontant">Ajouter une nouvelle d&eacute;pense :</label>
+				<input type="number" class="form-control" id="newmontant" placeholder="montant à ajouter">
+			</div>
+			<div class="form-group">
+				<label for="typeCag">Choisir une cat&eacute;gorie :</label>
+				<select id="typeCag"></select>
+			</div>
+			<button type="button" class="btn btn-primary" onclick="addDepense()">Ajouter</button>
+		</form>
+	</div>
+	<hr/>
+	<div class="row" id="periode"></div>
+	<div class="row" id='result'></div>
+</div>
+
+<script>
+
+var tab_mois=new Array("Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
+var ladate=new Date();
+document.getElementById("periode").innerHTML="Mois en cours : "+tab_mois[ladate.getMonth()]+" "+ladate.getFullYear();
+var adresserserveur="";
+var compteurCag=0;
+var nbCag=0;
+var chaine="";
+function getCategories(){
+chaine='<table class="table"><thead><tr><th scope="col">Cat&eacute;gorie</th><th scope="col">Somme des D&eacute;penses</th><th scope="col">Reste</th></tr></thead><tbody>';
+compteurCag=0;
+$.ajax({
+			url : adresserserveur+"/api/v1/compte/categories",
+			type : 'GET',
+			dataType : 'json', 
+			success : function(data,textStatus ){ 
+				nbCag=data.result.length;
+				for(var i=0;i<data.result.length;i++){
+					document.getElementById("typeCag").innerHTML+="<option value='"+data.result[i].libelle+"'>"+data.result[i].libelle+"</option>";
+					getSommeByCategorie(data.result[i]);
+				}
+		},
+			fail: function(xhr, textStatus, errorThrown){
+				alert('request failed');
+			}
+	});
+
+}
+
+function getSommeByCategorie(categorie){
+	$.ajax({
+			url : adresserserveur+"/api/v1/compte/depense/"+categorie.libelle,
+			type : 'GET',
+			dataType : 'json', 
+			success : function(data,textStatus ){ 
+				var compteur=0;
+				for(var i=0;i<data.result.length;i++){
+					compteur+=parseInt(data.result[i].montant);
+					
+				}
+				compteurCag++;
+				
+				if(compteur>=parseInt(categorie.budget)){
+					//rouge
+					chaine+="<tr class='table-danger'><td>"+categorie.libelle+"</td><td>"+compteur+"/"+categorie.budget+"</td><td>"+(parseFloat(categorie.budget)-parseFloat(compteur))+"&euro;</td></tr>";
+				}else if(parseFloat(categorie.budget)-parseFloat(15*categorie.budget/100)<=compteur){
+					//orange
+					chaine+="<tr class='table-warning'><td>"+categorie.libelle+"</td><td>"+compteur+"/"+categorie.budget+"</td><td>"+(parseFloat(categorie.budget)-parseFloat(compteur))+"&euro;</td></tr>";
+				}else{
+					//vert
+					chaine+="<tr class='table-success'><td>"+categorie.libelle+"</td><td>"+compteur+"/"+categorie.budget+"</td><td>"+(parseFloat(categorie.budget)-parseFloat(compteur))+"&euro;</td></tr>";
+				}
+				
+				
+				
+				//Cloture du tableau
+				if(compteurCag==nbCag){
+					chaine+="</tbody></table>";
+					document.getElementById("result").innerHTML=chaine;
+				}
+				
+			},
+			fail: function(xhr, textStatus, errorThrown){
+				alert('request failed');
+			}
+	});
+
+}
+
+function addDepense(){
+
+$.ajax({
+			url : adresserserveur+"/api/v1/compte/depense/"+document.getElementById("newmontant").value+"/"+document.getElementById("typeCag").value,
+			type : 'POST',
+			dataType : 'json', 
+			success : function(data,textStatus ){ 
+				location.reload(); 
+			},
+			fail: function(xhr, textStatus, errorThrown){
+				alert('request failed');
+			}
+	});
+
+}
+
+getCategories();
+
+</script>
+
+</body>
+</html> 
