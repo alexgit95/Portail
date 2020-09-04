@@ -52,16 +52,19 @@
 		
 		$.ajax({
 			url : "/api/v1/positions/",
-			type : 'POST',
+			type : 'GET',
 			dataType : 'json', 
 			success : function(data,textStatus ){ 
-			var positions =data;
+			var positions =data.result;
 			for (var i = 0; i < positions.length; i++) {
-			var latLng = new L.LatLng(positions[i].lattitude, positions[i].longitude);
-			var marker = new L.Marker(latLng, {title: positions[i].begin});
-			marker.bindTooltip(positions[i].name+" ,<br/>"+positions[i].begin , {permanent: true, direction: 'top'});
-			markersCluster.addLayer(marker);
-		}
+				
+				
+				var latLng = new L.LatLng(positions[i].lattitude, positions[i].longitude);
+				var marker = new L.Marker(latLng, {title: positions[i].date});
+				console.log(positions[i].date);
+				marker.bindTooltip(" ,<br/>"+positions[i].date , {permanent: true, direction: 'top'});
+				markersCluster.addLayer(marker);
+			}
 
 		map.addLayer(markersCluster);
 			},
