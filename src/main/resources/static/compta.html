@@ -156,8 +156,8 @@ background-color:#bbdefb;
 		}
 		var prevision=calculateSoldeFinale(soldeActuel, getMontantRestantObligatoirePourAujourdhui(), montantParJour, montantCourseRestante, extraPrevu);
 		
-		var montantEspereVivantNormalement=getMontantRestantObligatoirePourAujourdhui()+20*(30-new Date().getDate())+100;
-		var montantEspereVivantSerre=getMontantRestantObligatoirePourAujourdhui()+10*(30-new Date().getDate());
+		var montantEspereVivantNormalement=getMontantRestantObligatoirePourAujourdhui()+20*(30-new Date().getDate())+100+montantCourseRestante;
+		var montantEspereVivantSerre=getMontantRestantObligatoirePourAujourdhui()+10*(30-new Date().getDate())+montantCourseRestante;
 		
 		
 		document.getElementById("resultL1").innerHTML="Le solde previsionnel de fin de mois est :"+prevision;
