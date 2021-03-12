@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<style>
+.result{
+background-color:#bbdefb;
+
+
+}
+</style>
+    <title>Simulateur compte</title>
+	<script>
+	function getMontantRestantObligatoirePourAujourdhui(){
+		return getMontantRestantParJour(new Date().getDate());
+	}
+	
+	function getMontantRestantParJour(jour){
+		switch(jour){
+			case 1:
+				return 3266;
+				break;
+			case 2 :
+				return 3263;
+				break;
+			case 3:
+				return 3113;
+				break;
+			case 4:
+				return 3053;
+				break;
+			case 5:
+				return 1403;
+				break;
+			case 6 :
+				return 451;
+				break;
+			case 7:
+				return 451;
+				break;
+			case 8 :
+				return 439;
+				break;
+			case 9:
+				return 439;
+				break;
+			case 10 :
+				return 439;
+				break;
+			case 11:
+				return 439;
+				break;
+			case 12 :
+				return 439;
+				break;
+			case 13:
+				return 439;
+				break;
+			case 14:
+				return 439;
+				break;
+			case 15:
+				return 163;
+				break;
+			case 16 :
+				return 130;
+				break;
+			case 17:
+				return 130;
+				break;
+			case 18 :
+				return 130;
+				break;
+			case 19:
+				return 112;
+				break;
+			case 20 :
+				return 112;
+				break;
+			case 21:
+				return 112;
+				break;
+			case 22 :
+				return 100;
+				break;
+			case 23:
+				return 100;
+				break;
+			case 24:
+				return 100;
+				break;
+			case 25:
+				return 100;
+				break;
+			case 26 :
+				return 100;
+				break;
+			case 27:
+				return 57;
+				break;
+			case 28 :
+				return 42;
+				break;
+			case 29:
+				return 42;
+				break;
+			case 30 :
+				return 0;
+				break;
+			case 31 :
+				return 0;
+				break;
+			
+		}
+	}
+	
+	function calculateSoldeFinale(soldeActuel, montantObligatoireRestant, depenseParJour, montantCoursesRestant, montantDepenseExtraPrevu){
+		var jour=new Date().getDate();
+		var final = soldeActuel - montantObligatoireRestant - (30-jour)*depenseParJour - montantCoursesRestant - montantDepenseExtraPrevu;
+		return final;
+	}
+	
+	function calculateMontantPlaisir(soldePrevu){
+		if(soldePrevu<=0){
+			return 0;
+		}
+		if(soldePrevu>100){
+			return soldePrevu-100;
+		}
+		
+		return soldePrevu;
+	
+	}
+	
+	function valider(){
+		var soldeActuel=document.getElementById("soldeActuel").value;
+		var montantCourseRestante=document.getElementById("courses").value;
+		var extraPrevu=document.getElementById("extra").value;
+		
+		var radios = document.getElementsByName('inlineRadioOptions');
+		var montantParJour=0;
+		for (var i = 0, length = radios.length; i < length; i++) {
+			if (radios[i].checked) {
+				montantParJour=radios[i].value;
+				break;
+			}
+		}
+	
+		if(montantParJour==10){
+			alert("Attention cela veut dire que vous faites 0 depenses en dehors du strict necessaire pour vivre");
+		}
+		var prevision=calculateSoldeFinale(soldeActuel, getMontantRestantObligatoirePourAujourdhui(), montantParJour, montantCourseRestante, extraPrevu);
+		
+		var montantEspereVivantNormalement=getMontantRestantObligatoirePourAujourdhui()+20*(30-new Date().getDate())+100+montantCourseRestante;
+		var montantEspereVivantSerre=getMontantRestantObligatoirePourAujourdhui()+10*(30-new Date().getDate())+montantCourseRestante;
+		
+		
+		document.getElementById("resultL1").innerHTML="Le solde previsionnel de fin de mois est :"+prevision;
+		document.getElementById("resultL2").innerHTML="Le montant que vous pouvez utiliser pour des extra est  :"+calculateMontantPlaisir(prevision)+" euros";
+		
+		document.getElementById("resultL3").innerHTML="En vivant normalement, et sans extra de prévu vous devriez etre aujourd'hui à un solde de  :"+montantEspereVivantNormalement;
+		document.getElementById("resultL4").innerHTML="En vivant serre, et sans extra de prévu vous devriez etre aujourd'hui à un solde de  :"+montantEspereVivantSerre;
+	}
+	</script>
+  </head>
+  <body>
+  <div class="container">
+<form>
+  <div class="form-group">
+    <label for="soldeActuel">Solde Actuel</label>
+    <input type="text" class="form-control" id="soldeActuel" placeholder="0">
+  </div>
+  <div class="form-group">
+    <label for="courses">Montant courses restant pour ce mois ci</label>
+    <input type="text" class="form-control" id="courses" placeholder="0">
+  </div>
+   <div class="form-group">
+    <label for="extra">Extra Pr&eacute;vu</label>
+    <input type="text" class="form-control" id="extra" placeholder="0">
+  </div>
+  
+  <div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="20" checked>
+  <label class="form-check-label" for="inlineRadio1">Niveau de vie Normal</label>
+</div>
+<div class="form-check form-check-inline">
+  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="10">
+  <label class="form-check-label" for="inlineRadio2">Niveau de vie serré</label>
+</div>
+
+
+
+</form>
+  <div class="form-group">
+<button class="btn btn-primary"  onclick="valider()">Valider</button>
+</div>
+<div class="row result" id="resultL1"></div>
+<div class="row result" id="resultL2"></div>
+<div class="row result" id="resultL3"></div>
+<div class="row result" id="resultL4"></div>
+</div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
