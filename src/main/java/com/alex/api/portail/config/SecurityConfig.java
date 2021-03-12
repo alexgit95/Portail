@@ -43,7 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers("/myphotos/**").hasRole("USER")
 		.antMatchers("/api/v1/positions/**").hasRole("USER")
 		.antMatchers("/api/v1/photos/**").hasRole("USER")
-		.antMatchers("/actuator/**").hasRole("ADMIN")
+		//.antMatchers("/actuator/**").hasRole("ADMIN")
+		.antMatchers("/actuator/**").permitAll()
 		.antMatchers("/compta/**").permitAll()
 		.antMatchers("/api/v1/compte/**").permitAll()
 		.antMatchers("/*").permitAll()
@@ -67,4 +68,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthenticationFailureHandler customAuthenticationFailureHandler() {
 		return new CustomAuthenticationFailureHandler();
 	}
+	
+	
 }

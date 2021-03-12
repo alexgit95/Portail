@@ -1,5 +1,6 @@
 package com.alex.api.portail.publicapi;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,13 +12,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+
 @Controller
 @CrossOrigin
 @RequestMapping("/api/v1/positions")
 public class GeoPositionsController {
 	
 	private RestTemplate restTemplate = new RestTemplate();
-	
+	@Autowired
+	private MeterRegistry meterRegistry;
+	private boolean init=false;
+	private Counter mycounter;
 	
 	
 	@Value("${ip.geoposition}")
@@ -29,6 +36,10 @@ public class GeoPositionsController {
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ResponseEntity<String> getAll() {
 		System.out.println("GetAll");
+		if(!init) {
+			initCallCounters();
+		}
+		mycounter.increment();
 		
 		HttpHeaders headers = new HttpHeaders();
 		ResponseEntity<String> response = restTemplate.getForEntity(generateUrl()+"/positions/", String.class);
@@ -57,5 +68,10 @@ public class GeoPositionsController {
 	
 	private String generateUrl() {
 		return "http://"+ipGeoPositions+":"+portGeoPosition;
+	}
+	
+	private void initCallCounters() {
+		   mycounter = this.meterRegistry.counter("geopositions","type","nbappel");
+		   init=true;
 	}
 }
