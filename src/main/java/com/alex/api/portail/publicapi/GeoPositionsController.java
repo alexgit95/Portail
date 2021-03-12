@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
 
+import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 
@@ -34,6 +35,7 @@ public class GeoPositionsController {
 	
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@Timed(description = "Time spent getting all places")
 	public ResponseEntity<String> getAll() {
 		System.out.println("GetAll");
 		if(!init) {
